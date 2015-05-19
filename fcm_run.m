@@ -16,5 +16,3 @@ while not(stop);
     end
 end
 end
-
-
