@@ -7,7 +7,6 @@ for i = 1:N
     for j = 1:c
         z = [1 data(i, :)];
         A = U(j,i);
-        %g = U(j, :)';
         Az = A * z;
         for k = 1:d+1
             G(i,(j-1)*(d+1)+k) = Az(k);
