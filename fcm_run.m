@@ -1,4 +1,4 @@
-function [ V, U, Q, Q_m ] = fcm_run( data, c, m, dist, eps )
+function [ V, U, Q, Q_m ] = fcm_run( data, c, m, dist, max_step )
 U = generate_random_U(size(data,1), c);
 sigmas = calc_sigmas(data);
 step = 1;
@@ -11,7 +11,8 @@ while not(stop);
     Q_m(step) = Q;
     step = step + 1;
     diff_U = U - U_prev;
-    if max(diff_U(:).^2) < eps
+    %if max(diff_U(:).^2) < eps
+    if step > max_step
         stop = true;
     end
 end
