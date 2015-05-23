@@ -1,4 +1,4 @@
-classdef FCM
+classdef FCM < handle
     
     properties
         data
