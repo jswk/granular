@@ -2,7 +2,8 @@ classdef Util
     
     methods(Static)        
         function plot_Y(Y_learn, Y_learn_hat, Y_test, Y_test_hat)
-            plot(Y_learn, Y_learn_hat, 'black.', Y_test, Y_test_hat, 'red.');  
+            plot(Y_learn, Y_learn_hat, '.k', "markersize", 10,
+                 Y_test, Y_test_hat, '.r', "markersize", 10)
             maks = max(max(max(Y_learn),max(Y_learn_hat)),max(max(Y_test),max(Y_test_hat)));
             axis([0 maks 0 maks]);
         end
@@ -35,8 +36,9 @@ classdef Util
             mpg_data = dlmread('data/mpg.data');
             mpg_data_x = mpg_data(:,2:8);
             mpg_data_y = mpg_data(:,1);
-            ts_obj = TS(mpg_data_x, mpg_data_y, 20, 2, 20);
-            ts_obj.divide_data(.7), [a_opt,V,Q_learn,Q_test]=ts_obj.run();
+            ts_obj = TS(mpg_data_x, mpg_data_y, 5, 2, 20);
+            ts_obj.divide_data(.7);
+            [a_opt,V,Q_learn,Q_test]=ts_obj.run();
             Q_learn, Q_test
             
             U_learn = FCM.gen_U(V, ts_obj.X_learn, 2, DistL2(ts_obj.X_learn));
