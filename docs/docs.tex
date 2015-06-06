@@ -1,0 +1,201 @@
+\documentclass[a4paper; 11pt]{article}
+
+% global includes
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{courier} %times, kurier
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{indentfirst}
+\usepackage{icomma}
+\usepackage{booktabs}
+\usepackage{paralist}
+\usepackage{commath}
+\newgeometry{tmargin=2.3cm, lmargin=1.9cm, rmargin= 1.9cm, bmargin= 2.3cm}
+
+\title{Badanie działania modelu Takagi-Sugeno dla różnych parametrów i~zbiorów danych}
+\author{Marcin Kołodziej \and Jakub Sawicki}
+
+\begin{document}
+\renewcommand{\figurename}{Rys.}
+\renewcommand{\tablename}{Tab.}
+\renewcommand{\abstractname}{Abstrakt}
+
+\maketitle
+
+\section{Wstęp}
+
+W~ramach projektu dokonano implementacji modelu rozmytego wnioskowania Takagi-Sugeno.
+Reguły zaimplementowanego modelu opierają się na klastrach znalezionych przy
+pomocy algorytmu rozmytego klastrowania --- Fuzzy C-Means.
+
+Algorytmy zostały zaimplementowane w~języku programu MATLAB\@.
+
+\subsection{Fuzzy C-Means}
+
+Algorytm FCM dokonuje podziału grupy $N$ punktów wejściowych
+$\mathbf{x}_j \in \mathbb{R}^n$ na $c$ klastrów o~prototypach
+$\mathbf{v}_i \in \mathbb{R}^n$.
+Przynależność punktu każdego z~klastrów określona jest za pomocą macierzy
+przynależności $\mathbf{U}$, gdzie $u_{ij}$ określa przynależność punktu
+$\mathbf{x}_j$ do klastra z~prototypem $\mathbf{v}_i$.
+Macierz przynależności $\mathbf{U}$ spełniać musi następujące warunki
+\begin{inparaenum}[ a)]
+    \item $u_{ij} \in [0, 1]$
+    \item $\forall{j \in [1, N]} \sum_{i=1}^c{u_{ij}} = 1$
+    \item $\forall{i \in [1, c]} \sum_{j=1}^N{u_{ij}} > 0$.
+\end{inparaenum}
+
+Algorytm może być parametryzowany przez 
+$c \in \mathbb{Z}$, $c > 1$ -- liczbę klastrów oraz 
+$m \in \mathbb{R}$, $m > 1$ -- stopień ,,rozmycia''.
+
+Miarą jakości rozwiązania jest $Q$ zdefiniowane przez
+\begin{equation}
+    Q = \sum\limits_{i=1}^c \sum\limits_{k=1}^N {u_{ik}^m \norm{\mathbf{x}_k - \mathbf{v}_i}^2} \text{ .}
+    \label{eq:fcm:Q}
+\end{equation}
+
+Na początku generowana jest losowa macierz $\mathbf{U}$.
+Zostaje ona znormalizowana aby spełniała wyżej określone warunki.
+
+Następnie w~pętli wyliczane są kolejno prototypy korzystając z~macierzy
+$\mathbf{U}$ z~poprzedniej iteracji:
+\begin{equation}
+    \mathbf{v}_i = \frac{
+            \sum\limits_{k=1}^N {u_{ik}^m \mathbf{x}_k}
+        }{% ------------------------------------
+            \sum\limits_{k=1}^N {u_{ik}^m}
+        } \text{ .}
+    \label{eq:fcm:V}
+\end{equation}
+Na podstawie nowo wyliczonych prototypów liczona jest nowa macierz $\mathbf{U}$
+\begin{equation}
+    u_{st} = \frac{1}{\sum\limits_{j=1}^c {
+        \left( \frac{
+            \norm{\mathbf{x}_t - \mathbf{v}_s}}{
+            \norm{\mathbf{x}_t - \mathbf{v}_j}} \right)^{
+                \frac{2}{m - 1}}}} \text{ ,}
+    \label{eq:fcm:U}
+\end{equation}
+gdzie norma $\norm{\cdot}$ zdefiniowana została jako norma Euklidesowa
+$\norm{\mathbf{a}}^2 = \sum_{i=1}^n {a_i^2}$, dla $\mathbf{a} \in \mathbb{R}^n$.
+
+Za warunek stopu przyjęty został
+\begin{equation}
+    \max_{\forall{i,j}}{\abs{u_{ij}^\text{aktualny} - u_{ij}^\text{poprzedni}}} < \varepsilon 
+    \text{ , dla } \varepsilon > 0 \text{ .}
+    \label{eq:fcm:stop}
+\end{equation}
+
+
+\subsection{Model Takagi-Sugeno}
+
+Jest to model wnioskowania rozmytego oparty na regułach postaci
+\begin{equation}
+    \left\{ \texttt{ if } \mathbf{x} \texttt{ is } B_i \texttt{ then } f_i \right\}_{i~= 1,\dots,c} \text{ ,}
+    \label{eq:ts:rules-text}
+\end{equation}
+gdzie
+$B_i : \mathbb{R}^n \rightarrow [0, 1]$ -- funkcja przynależności $\mathbf{x}$ do reguły $i$ oraz
+$f_i : \mathbb{R}^n \rightarrow \mathbb{R}$ -- funkcja przyporządkowana 
+    $\mathbb{B}_i$, liniowa ze względu na parametry.
+
+Zapisując \eqref{eq:ts:rules-text} w~bardziej sformalizowany sposób otrzymuje się
+\begin{equation}
+    \texttt{ if } \mathbf{x} \cdot A_i \texttt{ then } \hat{y}_i = L_i(\mathbf{x}) = a_{i0} + a_{i1} x_1 + \dots + a_{in} x_n =
+    \begin{bmatrix}
+        a_{i0} \\ a_{i1} \\ \vdots \\ a_{in}
+    \end{bmatrix}^T
+    \begin{bmatrix}
+        1 \\ x_1 \\ \vdots \\ x_n
+    \end{bmatrix} = \mathbf{a}_i^T \mathbf{z} \text{ .}
+    \label{eq:ts:rules}
+\end{equation}
+
+Miara przynależności $A_i$ zdefiniowana jest analogicznie do \eqref{eq:fcm:U}
+\begin{equation}
+    A_i(\mathbf{x}) = \frac{1}{\sum\limits_{j=1}^c {
+        \left( \frac{
+            \norm{\mathbf{x} - \mathbf{v}_i}}{
+            \norm{\mathbf{x} - \mathbf{v}_j}} \right)^{
+                \frac{2}{m - 1}}}} \text{ .}
+    \label{eq:ts:B}
+\end{equation}
+
+Dzięki temu, że $A_i(\mathbf{x}) \in \mathbb{R}$ możliwe jest następujące przekształcenie:
+\begin{equation}
+    \hat{y} = 
+    \sum\limits_{i=1}^c {A_i(\mathbf{x}) L_i(\mathbf{x})} =
+    \sum\limits_{i=1}^c {A_i(\mathbf{x}) \mathbf{a}_i^T \mathbf{z}} =
+    \sum\limits_{i=1}^c \mathbf{a}_i^T \underbrace{A_i(\mathbf{x}) \mathbf{z}}_{\mathbf{g}_i(\mathbf{x})} =
+    \sum\limits_{i=1}^c \mathbf{a}_i^T \mathbf{g}_i(\mathbf{x}) \text{ .}
+    \label{eq:ts:yhat}
+\end{equation}
+
+Możliwe jest następnie usunięcie z~wyrażenia sumy poprzez podstawienie
+\begin{equation}
+    \mathbf{a} = 
+    \begin{bmatrix} 
+        \mathbf{a}_1 \\ 
+        \vdots \\ 
+        \mathbf{a}_c 
+    \end{bmatrix}
+    \text{ oraz }
+    \mathbf{g}(\mathbf{x}) = 
+    \begin{bmatrix} 
+        \mathbf{g}_1(\mathbf{x}) \\ 
+        \vdots \\ 
+        \mathbf{g}_c(\mathbf{x}) 
+    \end{bmatrix} \text{ .}
+    \label{eq:ts:ag}
+\end{equation}
+
+W~wyniku otrzymujemy
+\begin{equation}
+    \hat{y} =
+    \sum\limits_{i=1}^c \mathbf{a}_i^T \mathbf{g}_i(\mathbf{x}) =
+    \mathbf{a}^T \mathbf{g}(\mathbf{x}) =
+    \mathbf{g}^T(\mathbf{x}) \mathbf{a} \text{ .}
+    \label{eq:ts:yhatfinal}
+\end{equation}
+
+Mając $N$ danych wejściowych dostajemy $N$ równań postaci
+\begin{equation}
+    \left\{ \hat{y}_i = \mathbf{g}^T(\mathbf{x_i}) \mathbf{a} \right\} _ {i = 1, \dots , N} \text{ ,}
+    \label{eq:ts:yhateqs}
+\end{equation}
+które można następnie zapisać w~zwartej formie
+\begin{equation}
+    \hat{\mathbf{y}} = \mathbb{G} \mathbf{a} \text{ , gdzie }
+    \mathbb{G} = \begin{bmatrix}
+        \mathbf{g}_1(\mathbf{x_1}) & \dots & \mathbf{g}_c(\mathbf{x_1}) \\
+        \vdots & \ddots & \vdots \\
+        \mathbf{g}_1(\mathbf{x_N}) & \dots & \mathbf{g}_c(\mathbf{x_N})
+    \end{bmatrix} \text{ .}
+    \label{eq:ts:yhatmatrix}
+\end{equation}
+Jest to nadokreślony układ równań liniowych, który można rozwiązać ze względu
+na $\mathbf{a}$ metodą najmniejszych kwadratów, co sprowadza się do obliczenia
+wyrażenia
+\begin{equation}
+    \mathbf{a} = \left( \mathbb{G}^T \mathbb{G} \right)^{-1} \mathbb{G}^T \mathbf{y} \text{ ,}
+    \label{eq:ts:a}
+\end{equation}
+gdzie widnieje $\mathbf{y}$, jako że chcemy aby $\hat{\mathbf{y}} \approx \mathbf{y}$.
+
+Wskaźnik jakości $Q$ określony jest jako
+\begin{equation}
+    Q = \sqrt{ \frac{ \sum\limits_{k=1}^N {\left( \hat{y}_k - y_k \right)^2} }{N} }
+    = \sqrt { \frac{ (\hat{\mathbf{y}} - \mathbf{y})^T (\hat{\mathbf{y}} - \mathbf{y}) }{N} } \text{ .}
+    \label{eq:ts:Q}
+\end{equation}
+
+
+
+
+
+\end{document}
