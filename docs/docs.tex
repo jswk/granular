@@ -199,8 +199,8 @@ Wskaźnik jakości $Q$ określony jest jako
 \subsection{Opis testu}
 Test sprawności polega na obliczaniu wartości stopnia dopasowania $Q$ dla zbiorów uczącego,
 stanowiącego 70\% całości danych, oraz testowego, będącego pozostałymi 30\%. Dane były dzielone
-na zmienną ilość klastrów $c \in [3,N-1]$ gdzie $N - ilość argumentów$, a każdy z podziałów
-był przeprowadzany dla parametru $m \n [1.5, 2.5]$ z krokiem $0.1$. Aby uzyskane wyniki były
+na zmienną ilość klastrów $c \in [3,N-1]$ gdzie $N$ to ilość argumentów, a każdy z podziałów
+był przeprowadzany dla parametru $m \in [1.5, 2.5]$ z krokiem $0.1$. Aby uzyskane wyniki były
 bardziej prawdopodobne dla każdego zestawu parametrów wejściowych przeprowadzona została
 \emph{10-fold cross-validation}, to znaczy test wykonywany był dziesięciokrotnie, a otrzymane
 wyniki uśredniane.
@@ -216,9 +216,9 @@ dopasowania $Q$, powyżej $10$, niektóre sięgające aż do $200$. Wywnioskowal
 się w prosty sposób na klastry. Najlepsze wyniki, dla wszystkich wartości parametru $c$ zostały otrzymane
 dla $m = 2$, przy jakichkolwiek zmianach tego parametru pogarszał się współczynnik jakości.
 
-\begin{figure}
+\begin{figure}[h]
 \begin{center}
-\includegraphics{dq_kegg.png}
+\includegraphics[scale=.3]{dq_kegg.png}
 \caption{Wykres wartości bezwzględnej różnicy wskaźników dopasowania dla zbiorów uczącego oraz testowego, dla zbioru \emph{KEGG Metabolic Relation Network (Undirected)}}
 \end{center}
 \end{figure}
@@ -240,15 +240,53 @@ Na bazie tych parametrów obliczane jest obciążenie cieplne, będące ciągł�
 Analiza wykazała, że wskaźnik dopasowania rośnie tylko dla niskich wartości parametru dopasowania $m$ oraz
 liczbie klastrów większej od $c = 6$. 
 
-\begin{figure}
+\begin{figure}[h]
 \begin{center}
-\includegraphics{dq_energyeff.png}
+\includegraphics[scale=0.3]{dq_energyeff.png}
 \caption{Wykres wartości bezwzględnej różnicy wskaźników dopasowania dla zbiorów uczącego oraz testowego, dla zbioru \emph{Energy efficiency}}
 \end{center}
 \end{figure}
 
 \subsubsection{Boston housing}
+Zbiór danych zawiera wartości nieruchomości na terenach podmiejskich Bostonu. Argumentami są:
+
+\begin{itemize}
+\item Współczynnik przestępczości
+\item Odsetek parceli mieszkalnych powyżej $2322.5m^2$
+\item Odsetek powierzchni przestrzeni biznesowych
+\item Wskaźnik Charlesa Rivera
+\item Stężenie tlenków węgla
+\item Średnia ilość pokoi w mieszkaniu
+\item Odsetek zamieszkałych przez właścicieli posiadłości wybudowanych przed 1940r.
+\item Średnia ważona odległość do pięciu urzędów pracy
+\item Współczynnik dostępności do węzłów autostradowych
+\item Wartość podatek od nieruchmości na $\$10000$
+\item Współczynnik ilości uczniów do nauczycieli
+\item Odsetek ludności czarnoskórej
+\item Procent ludności biednej
+\item Mediana wartości posiadłości (w $\$1000$)
+\end{itemize}
+
+Wartością traktowaną jako wartość funkcji jest mediana wartości posiadłości wyrażona w tysiącach dolarów.
+
 \subsubsection{Auto MPG}
+Zbiór danych zawiera dane samochodów oraz ilość spalanego przez nie paliwa w cyklu miejskim. Argumentami są:
+
+\begin{itemize}
+\item Ilość cylindrów
+\item Objętość skokowa
+\item Ilość koni mechanicznych
+\item Waga
+\item Przyspieszenie
+\item Rok produkcji
+\item Pochodzenie
+\end{itemize}
+
+Wartością funkcji jest spalanie paliwa wyrażone w galonach na milę. Analiza wartości wskaźników dopasowania
+$Q$ ukazuje, że zbiór danych można podzielić na dowolną ilość klastrów, która jest zgodna z naszymi
+założeniami. Dobór parametru $m$ nie wpływa znacząco na wyniki. Dane powinny być w prosty sposób
+degranularyzowane. Tak jak w przypadku \emph{Energy Efficiency} przy dzieleniu na dużą ilość klastrów,
+przy użyciu niskich wartości parametru $m$, występuje efekt drastycznego pogorszenia $Q$.
 
 \subsection{Wnioski}
 Dla zbiorów \emph{Energy efficiency} oraz \emph{Auto MPG} możemy zauważyć bardzo niski wskaźnik $Q$ co sugeruje,
@@ -269,5 +307,5 @@ możemy zauważyć nagły wzrost $Q$.
 \item implementację FCM i~TS w~MATLAB
 \item obliczenia sprawności modelu TS dla zbiorów \emph{Boston housing} oraz \emph{Auto MPH}
 \end{itemize}
-
 \end{document}
+
