@@ -194,18 +194,80 @@ Wskaźnik jakości $Q$ określony jest jako
     \label{eq:ts:Q}
 \end{equation}
 
+\section{Testy sprawności algorytmu}
+
+\subsection{Opis testu}
+Test sprawności polega na obliczaniu wartości stopnia dopasowania $Q$ dla zbiorów uczącego,
+stanowiącego 70\% całości danych, oraz testowego, będącego pozostałymi 30\%. Dane były dzielone
+na zmienną ilość klastrów $c \in [3,N-1]$ gdzie $N - ilość argumentów$, a każdy z podziałów
+był przeprowadzany dla parametru $m \n [1.5, 2.5]$ z krokiem $0.1$. Aby uzyskane wyniki były
+bardziej prawdopodobne dla każdego zestawu parametrów wejściowych przeprowadzona została
+\emph{10-fold cross-validation}, to znaczy test wykonywany był dziesięciokrotnie, a otrzymane
+wyniki uśredniane.
+
+\subsection{Wyniki testu na zbiorach danych}
+\subsubsection{KEGG Metabolic Relation Network (Undirected)}
+Dane reprezentują nieskierowany graf reakcji metabolicznych, bazując na informacjach zaczerpniętych
+z \emph{KEGG (Kyoto Encyclopedia of Genes and Genomes)}. Jako argumenty potraktowaliśmy wszystkie
+nietekstowe zmienne, natomiast jako wyjście funkcji współczynnik grupowania, będący ciągłą
+wartością zmiennoprzecinkową. Dla pewnych zestawów parametrów nie otrzymaliśmy żadnych wyników
+(algorytm zwrócić $Q = NaN$), a dla większej części z nich bardzo wysokie wartości wskaźnika
+dopasowania $Q$, powyżej $10$, niektóre sięgające aż do $200$. Wywnioskowaliśmy, że zbiór nie dzieli
+się w prosty sposób na klastry. Najlepsze wyniki, dla wszystkich wartości parametru $c$ zostały otrzymane
+dla $m = 2$, przy jakichkolwiek zmianach tego parametru pogarszał się współczynnik jakości.
+
+\begin{figure}
+\begin{center}
+\includegraphics{dq_kegg.png}
+\caption{Wykres wartości bezwzględnej różnicy wskaźników dopasowania dla zbiorów uczącego oraz testowego, dla zbioru \emph{KEGG Metabolic Relation Network (Undirected)}}
+\end{center}
+\end{figure}
+
+\subsubsection{Energy efficiency}
+Wyniki badań określają efektywność energetyczną, tj. obciążenie cieplne, jako funkcję parametrów budynku.
+Zawiera on następujące dane wejściowe:
+\begin{itemize}
+\item względna zwartość
+\item pole powierzchni (całość)
+\item pole powierzchni ścian
+\item pole powierzchni dachu
+\item wysokość
+\item orientacja
+\item pole powierzchni okien
+\item rozmieszczenie okien
+\end{itemize}
+Na bazie tych parametrów obliczane jest obciążenie cieplne, będące ciągłą wartością zmiennoprzecinkową.
+Analiza wykazała, że wskaźnik dopasowania rośnie tylko dla niskich wartości parametru dopasowania $m$ oraz
+liczbie klastrów większej od $c = 6$. 
+
+\begin{figure}
+\begin{center}
+\includegraphics{dq_energyeff.png}
+\caption{Wykres wartości bezwzględnej różnicy wskaźników dopasowania dla zbiorów uczącego oraz testowego, dla zbioru \emph{Energy efficiency}}
+\end{center}
+\end{figure}
+
+\subsubsection{Boston housing}
+\subsubsection{Auto MPG}
+
+\subsection{Wnioski}
+Dla zbiorów \emph{Energy efficiency} oraz \emph{Auto MPG} możemy zauważyć bardzo niski wskaźnik $Q$ co sugeruje,
+że dane są poprawnie dzielone na klastry i ich odtworzenie nie powinno sprawić problemów. Jedynie przy dużej
+(zbliżonej do ilości argumentów) ilości klastrów oraz wartości parametru $m$ ze skrajów testowanych wartości
+możemy zauważyć nagły wzrost $Q$.
 
 \section{Podział prac}
 
 \emph{Marcin Kołodziej} wykonał
 \begin{itemize}
 \item testy sprawności algorytmu
+\item obliczenia sprawności modelu TS dla zbiorów \emph{KEGG Metabolic Relation Network (Undirected)} oraz \emph{Energy efficiency}
 \end{itemize}
 
 \emph{Jakub Sawicki} wykonał
 \begin{itemize}
 \item implementację FCM i~TS w~MATLAB
-\item obliczenia sprawności modelu TS dla zbiorów \emph{Boston housing} oraz \emph{mpg}
+\item obliczenia sprawności modelu TS dla zbiorów \emph{Boston housing} oraz \emph{Auto MPH}
 \end{itemize}
 
 \end{document}
