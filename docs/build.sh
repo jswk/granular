@@ -33,8 +33,13 @@ if ls *.plt &>/dev/null; then
     for f in *.plt; do
         echo -n "Generating $f... "
         chmod u+x $f
-        ./$f &>/dev/null
-        echo "OK"
+        ./$f &> tmp.output
+        if [ $? -ne 0 ]; then
+            cat tmp.output
+            exit 1
+        else
+            echo "OK"
+        fi
     done
 fi
 
