@@ -284,6 +284,33 @@ Zbiór danych zawiera wartości nieruchomości na terenach podmiejskich Bostonu.
 
 Wartością traktowaną jako wartość funkcji jest mediana wartości posiadłości wyrażona w tysiącach dolarów.
 
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \resizebox{1.2\textwidth}{!}{\input{w_housing_learn}}
+        \caption{Wykres wartości $Q_\text{learn}$ dla zbioru \emph{Boston Housing}}
+        \label{fig:housing_learn}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \resizebox{1.2\textwidth}{!}{\input{w_housing_test}}
+        \caption{Wykres wartości $Q_\text{test}$ dla zbioru \emph{Boston Housing}}
+        \label{fig:housing_test}
+    \end{minipage}
+\end{figure}
+
+Na podstawie danych można stwierdzić, że zbiór nie cechuje się podziałem na klastry.
+Brak jest wyraźnych minimów lokalnych $Q_\text{test}$.
+Wartość $Q_\text{test}$ ze wzrostem $c$ rośnie szybciej dla małych wartości $m$
+niż dla dużych.
+
+Co ciekawe, wartość $Q_\text{learn}$ oraz $Q_\text{test}$ dla $m > 2$ oraz $c > 25$
+zaczyna gwałtownie spadać.
+Liczność tego zbioru danych to 505, więc nie następuje nasycenie ilością klastrów.
+Ze względu na kosztowność obliczeniową w~tym rejonie, nie zostały
+przeprowadzone dalsze badania tego zachowania się funkcji celu.
+
 \subsubsection{Auto MPG}
 Zbiór danych zawiera dane samochodów oraz ilość spalanego przez nie paliwa w cyklu miejskim. Argumentami są:
 
@@ -296,6 +323,8 @@ Zbiór danych zawiera dane samochodów oraz ilość spalanego przez nie paliwa w
 \item Rok produkcji
 \item Pochodzenie
 \end{itemize}
+
+Wartością funkcji jest spalanie paliwa wyrażone w galonach na milę.
 
 \begin{figure}[h]
     \centering
@@ -312,8 +341,6 @@ Zbiór danych zawiera dane samochodów oraz ilość spalanego przez nie paliwa w
         \label{fig:mpg_test}
     \end{minipage}
 \end{figure}
-
-Wartością funkcji jest spalanie paliwa wyrażone w galonach na milę.
 
 Analiza wartości wskaźników dopasowania $Q$ ukazuje, że zbiór danych nie
 charakteryzuje się podziałem na klastry.
